@@ -1,12 +1,10 @@
 # Code for Producer
-from flask import Flask
+from flask import Flask,g
 from flask import request
 import json
 
-global consumer_data
 app = Flask(__name__)
-cunsumer_data = []
-
+consumer_data = []
 
 @app.route('/new_ride',methods=["POST"])
 def new_ride():
@@ -30,6 +28,7 @@ def new_ride_matching_consumer():
     mapp = dict()
     mapp[name,ip] = [consumer_id,req_ip]
     consumer_data.append(mapp)
+    return "Got data"
 
 @app.route("/home")
 def home():
