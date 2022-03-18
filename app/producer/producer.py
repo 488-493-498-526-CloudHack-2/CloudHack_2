@@ -30,8 +30,9 @@ def new_ride_matching_consumer():
     consumer_data.append(mapp)
     return "Got data"
 
-@app.route("/home")
+@app.route("/")
 def home():
+    print("hello world")
     print(consumer_data)
     return str(consumer_data)
     
