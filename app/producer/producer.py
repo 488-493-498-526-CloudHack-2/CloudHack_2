@@ -2,6 +2,10 @@
 from flask import Flask
 from flask import request
 import json
+import pika
+import time
+
+time.sleep(15)
 
 app = Flask(__name__)
 consumer_data = []
@@ -32,8 +36,19 @@ def new_ride_matching_consumer():
 
 @app.route("/")
 def home():
-    print("hello world")
+    def callback(ch, method, properties, body):
+        print(" [x] Received %r" % body)
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='hello')
+    channel.basic_publish(exchange='',
+                        routing_key='hello',
+                        body='Hello World!')
+    print(" [x] Sent 'Hello World!'")
+                        
+    # connection.close()
     print(consumer_data)
+    # print("aslkdjf")
     return str(consumer_data)
     
 if __name__ == '__main__':
