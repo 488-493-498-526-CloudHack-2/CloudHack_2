@@ -32,7 +32,6 @@ def new_ride_matching_consumer():
 
 @app.route("/home")
 def home():
-    global cunsumer_data
     print(consumer_data)
     return str(consumer_data)
 if __name__ == '__main__':
