@@ -1,5 +1,5 @@
 # Code for Producer
-from flask import Flask,g
+from flask import Flask
 from flask import request
 import json
 
@@ -34,5 +34,6 @@ def new_ride_matching_consumer():
 def home():
     print(consumer_data)
     return str(consumer_data)
+    
 if __name__ == '__main__':
    app.run(debug = True)
