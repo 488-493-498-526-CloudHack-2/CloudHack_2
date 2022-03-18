@@ -36,8 +36,6 @@ def new_ride_matching_consumer():
 
 @app.route("/")
 def home():
-    def callback(ch, method, properties, body):
-        print(" [x] Received %r" % body)
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
     channel.queue_declare(queue='hello')
