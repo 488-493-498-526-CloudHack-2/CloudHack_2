@@ -2,19 +2,23 @@
 
 version: "2.1"
 services:
-  # rabbitMQ_server:
-  #   image: 
-  #   container_name: 
-  #   ports:
+  rabbitmq:
+    image: "rabbitmq:latest"
+    container_name: "rabbitmq" 
+    ports:
+      - 5672:5672
+      - 15672:15672
   #   restart:
   producer:
     image: producer
-    # container_name: producer
+    container_name: producer
     # restart: 
     ports: 
       - 5000:5000
-    # depends_on:
-      # - rabbitMQ_server
+    volumes:
+      - ./producer:/python-docker/.
+    depends_on:
+      - rabbitmq
   # ride_matching:
   #   image: 
   #   container_name: 
