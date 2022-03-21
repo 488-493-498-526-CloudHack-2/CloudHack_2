@@ -9,7 +9,7 @@ time.sleep(15)
 
 app = Flask(__name__)
 consumer_data = []
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+
 
 @app.route('/new_ride',methods=["POST"])
 def new_ride():
@@ -37,21 +37,18 @@ def new_ride_matching_consumer():
 
 @app.route("/")
 def home():
-    try:
-        channel = connection.channel()
-        channel.queue_declare(queue='hello')
-        channel.basic_publish(exchange='',
-                            routing_key='hello',
-                            body='Hello World!')
-        print(" [x] Sent 'Hello World!'")
-    except:
-        print("Connction to RabbitMQ failed")
-    finally:
-        return "Home page"
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='hello',durable=True)
+    channel.basic_publish(exchange='',
+                        routing_key='hello',
+                        body='Hello World!')
+    connection.close()
+    return "[x] Sent 'Hello World!'"
 
 @app.teardown_appcontext
 def teardown_rabbitmq(exception):
-	connection.close()
+    print("app destoryed")
 
 
 if __name__ == '__main__':

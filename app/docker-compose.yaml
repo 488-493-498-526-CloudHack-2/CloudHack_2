@@ -8,11 +8,12 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-  #   restart:
   producer:
     image: producer
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
     container_name: producer
-    # restart: 
     ports: 
       - 5000:5000
     volumes:
@@ -21,7 +22,12 @@ services:
       - rabbitmq
   ride_matching:
     image: consumer
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
     container_name: consumer
+    volumes:
+      - ./consumer:/consumer/.
     depends_on:
       - producer
       - rabbitmq
