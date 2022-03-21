@@ -31,6 +31,8 @@ services:
     depends_on:
       - producer
       - rabbitmq
+    environment:
+      - PYTHONUNBUFFERED=1
     # environment:
       # - CONSUMER_ID=
       # - PRODUCER_ADDRESS=

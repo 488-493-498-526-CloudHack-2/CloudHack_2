@@ -1,5 +1,7 @@
 import pika
 import time
+import sys
+sys.stdout.flush()
 
 
 def callback(ch, method, properties, body):
@@ -20,9 +22,9 @@ def callback(ch, method, properties, body):
 
 while(True):
     try:
-        sleepTime = 10
-        print(' [*] Sleeping for ', sleepTime, ' seconds.')
-        # time.sleep(5)
+        # sleepTime = 10
+        print(' [*] Sleeping for ', "5", ' seconds.')
+        time.sleep(5)
     
         print(' [*] Connecting to server ...')
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
