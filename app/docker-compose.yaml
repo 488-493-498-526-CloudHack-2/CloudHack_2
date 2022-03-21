@@ -19,13 +19,15 @@ services:
       - ./producer:/python-docker/.
     depends_on:
       - rabbitmq
-  # ride_matching:
-  #   image: 
-  #   container_name: 
-  #   depends_on:
-  #   environment:
-  #     - CONSUMER_ID=
-  #     - PRODUCER_ADDRESS=
+  ride_matching:
+    image: consumer
+    container_name: consumer
+    depends_on:
+      - producer
+      - rabbitmq
+    # environment:
+      # - CONSUMER_ID=
+      # - PRODUCER_ADDRESS=
   # ride_database:
   #   image: 
   #   container_name:
