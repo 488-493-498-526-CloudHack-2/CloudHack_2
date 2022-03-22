@@ -5,7 +5,7 @@ import json
 import pika
 import time
 
-time.sleep(15)
+# time.sleep(15)
 
 app = Flask(__name__)
 consumer_data = []
@@ -15,11 +15,25 @@ consumer_data = []
 def new_ride():
     my_new_string_value = request.data.decode("utf-8")
     data = json.loads(my_new_string_value)
-    pickup = data['pickup']
-    destination = data['destination']
-    time = data['time']
-    cost = data['cost']
-    seats = data['seats']
+    # pickup = data['pickup']
+    # destination = data['destination']
+    # time = data['time']
+    # cost = data['cost']
+    # seats = data['seats']
+
+    # print(data, type(data))
+
+    json_data = json.dumps(data)
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='new_ride',durable=True)
+    channel.basic_publish(exchange='',
+                        routing_key='hello',
+                        body=json_data)
+    print(" [x] Sent %r" % json_data)
+    connection.close()
+
     return "Got data"
 
 @app.route("/new_ride_matching_consumer",methods=["POST"])
@@ -33,6 +47,16 @@ def new_ride_matching_consumer():
     mapp = dict()
     mapp[name,ip] = [consumer_id,req_ip]
     consumer_data.append(mapp)
+    json_data = json.dumps(str(consumer_data))
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='new_ride',durable=True)
+    channel.basic_publish(exchange='',
+                        routing_key='hello',
+                        body=json_data)
+    print(" [x] Sent %r" % json_data)
+    connection.close()
     return "Got data"
 
 @app.route("/")
