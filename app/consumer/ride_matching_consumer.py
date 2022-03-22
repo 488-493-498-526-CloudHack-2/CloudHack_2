@@ -1,41 +1,36 @@
 import pika
 import time
-import sys
-sys.stdout.flush()
+import requests
+import os
 
+sleepTime = 15
+print(' [*] Sleeping for ', sleepTime, ' seconds.')
+time.sleep(sleepTime)
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %s" % body)
     cmd = body.decode()
-    with open("myfile.txt", "w") as file1:
-    # Writing data to a file
-        file1.write(cmd)
-
-    if cmd == 'hey':
-        print("hey there")
-    elif cmd == 'hello':
-        print("well hello there")
-    else:
-        print("sorry i did not understand ", body)
+    print("Received: ",cmd)
     print(" [x] Done")
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
-while(True):
-    try:
-        # sleepTime = 10
-        print(' [*] Sleeping for ', "5", ' seconds.')
-        time.sleep(5)
+try:
+    SERVER_IP = os.getenv("PRODUCER_ADDRESS")
+    CONSUMER_ID = os.getenv("CONSUMER_ID")
+    data = {"consumer_id":CONSUMER_ID}
+    res = requests.post(SERVER_IP+"/new_ride_matching_consumer", data=data)
+    if not res.ok:
+        raise Exception("Response not received!!");
     
-        print(' [*] Connecting to server ...')
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
-        channel = connection.channel()
-        channel.queue_declare(queue='hello', durable=True)
-    
-        print(' [*] Waiting for messages.')
-    
-        channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(queue='hello', on_message_callback=callback)
-        channel.start_consuming()
-    
-    except:
-        print("errorrrrrrrrrrrr")
+    print(' [*] Connecting to server ...')
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+    channel = connection.channel()
+    channel.queue_declare(queue='hello', durable=True)
+
+    print(' [*] Waiting for messages.')
+
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(queue='hello', on_message_callback=callback)
+    channel.start_consuming()
+
+except:
+    print("Error connecting to rabbitmq")

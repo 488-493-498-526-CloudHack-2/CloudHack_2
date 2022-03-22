@@ -33,9 +33,8 @@ services:
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
-    # environment:
-      # - CONSUMER_ID=
-      # - PRODUCER_ADDRESS=
+      - CONSUMER_ID=CUSTOMER_1
+      - PRODUCER_ADDRESS=http://localhost:5000
   # ride_database:
   #   image: 
   #   container_name:
