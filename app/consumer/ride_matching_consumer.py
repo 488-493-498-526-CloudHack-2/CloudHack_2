@@ -2,6 +2,7 @@ import pika
 import time
 import requests
 import os
+import json
 
 sleepTime = 15
 print(' [*] Sleeping for ', sleepTime, ' seconds.')
@@ -9,8 +10,11 @@ time.sleep(sleepTime)
 
 def callback(ch, method, properties, body):
     cmd = body.decode()
-    print("Received: ",cmd)
-    print(" [x] Done")
+    cmd = json.loads(cmd)
+    slpTime = cmd["time"]
+    print("[*] Ride for ",slpTime,"seconds")
+    time.sleep(slpTime)
+    print(" [x] Ride completed")
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 try:
@@ -32,5 +36,5 @@ try:
     channel.basic_consume(queue='hello', on_message_callback=callback)
     channel.start_consuming()
 
-except:
-    print("Error connecting to rabbitmq")
+except Exception as e:
+    print(e)
