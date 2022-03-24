@@ -23,7 +23,7 @@ try:
     data = {"consumer_id":CONSUMER_ID}
     res = requests.post(SERVER_IP+"/new_ride_matching_consumer", data=data)
     if not res.ok:
-        raise Exception("Response not received!!");
+        raise Exception("Response not received!!")
     
     print(' [*] Connecting to server ...')
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
