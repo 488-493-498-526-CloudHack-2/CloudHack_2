@@ -28,12 +28,12 @@ try:
     print(' [*] Connecting to server ...')
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
     channel = connection.channel()
-    channel.queue_declare(queue='new_ride', durable=True)
+    channel.queue_declare(queue='ride_matching', durable=True)
 
     print(' [*] Waiting for messages.')
 
     channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(queue='new_ride', on_message_callback=callback)
+    channel.basic_consume(queue='ride_matching', on_message_callback=callback)
     channel.start_consuming()
 
 except Exception as e:

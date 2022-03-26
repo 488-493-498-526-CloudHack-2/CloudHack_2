@@ -6,7 +6,7 @@ import pika
 
 app = Flask(__name__)
 consumer_data = []
-
+mapp = dict()
 
 @app.route('/new_ride',methods=["POST"])
 def new_ride():
@@ -17,14 +17,20 @@ def new_ride():
 
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
-    channel.queue_declare(queue='new_ride',durable=True)
+    channel.queue_declare(queue='ride_matching',durable=True)
     channel.basic_publish(exchange='',
-                        routing_key='new_ride',
+                        routing_key='ride_matching',
                         body=json_data)
-    print(" [x] Sent %r" % json_data)
+    print(" [x] Sent %r to ride_matching queue" % json_data)
+
+    channel.queue_declare(queue='database',durable=True)
+    channel.basic_publish(exchange='',
+                        routing_key='database',
+                        body=json_data)
+    print(" [x] Sent %r to database queue" % json_data)
     connection.close()
 
-    return "Got data"
+    return "Pushed to queues"
 
 @app.route("/new_ride_matching_consumer",methods=["POST"])
 def new_ride_matching_consumer():
@@ -35,20 +41,9 @@ def new_ride_matching_consumer():
     ip = request.remote_addr
     req_ip = request.remote_addr
 
-    mapp = dict()
     mapp[name,ip] = [consumer_id,req_ip]
-    consumer_data.append(mapp)
-    json_data = json.dumps(str(consumer_data))
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-    channel = connection.channel()
-    channel.queue_declare(queue='new_ride_mat_con',durable=True)
-    channel.basic_publish(exchange='',
-                        routing_key='new_ride_mat_con',
-                        body=json_data)
-    print(" [x] Sent %r" % json_data)
-    connection.close()
-    return "Got data"
+    return "Saved details to Map"
 
 # @app.route("/")
 # def home():
