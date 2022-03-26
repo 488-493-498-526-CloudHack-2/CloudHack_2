@@ -26,15 +26,13 @@ services:
       context: ./consumer
       dockerfile: Dockerfile
     container_name: consumer
-    volumes:
-      - ./consumer:/consumer/.
     depends_on:
       - producer
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
       - CONSUMER_ID=CUSTOMER_1
-      - PRODUCER_ADDRESS=http://localhost:5000
+      - PRODUCER_ADDRESS=http://producer:5000
   # ride_database:
   #   image: 
   #   container_name:

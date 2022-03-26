@@ -1,5 +1,12 @@
 # Building Microservice Communication With RabbitMQ
 
+### Instructions for execution
+Clone this repository then
+```
+cd app
+docker-compose up --build
+```
+
 ## Introduction
 
 The microservice architecture is one of the most popular forms of deployment, especially in larger organisations where there are multiple components that can be loosely coupled together. Not only does this make it easier to work on separate components independently, but ensures that issues in one component does not bring down the rest of the service. A microservices architecture consists of a collection of small, autonomous services where each service is self-contained and should implement a single business capability within a bounded context. This also comes with the advantage that a single system can scale thereby limiting the resources to required components. For example, during a shopping sale, the cart and payment microservices might need more resources than the login microservice. However, one of the issues that comes up with microservices is inter-service communication. There is a need to send messages asynchronously and reliably across services, such that they’re delivered even in case of network delays or one of the services failing to receive it immediately. For this reason, we use messaging queues. A message queue is a form of asynchronous service-to-service communication used in serverless and microservices architectures. Messages are stored on the queue until they are processed and deleted. Each message is processed only once, by a single consumer.
