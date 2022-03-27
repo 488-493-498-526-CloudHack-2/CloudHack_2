@@ -26,7 +26,7 @@ def create_connection():
 import psycopg2
 pswd=os.getenv('POSTGRESPSWD')
 con = psycopg2.connect(database='test', user='postgres',
-                       password=pswd,host=os.getenv('HOST'))
+                       password=pswd, host=os.getenv('HOST'))
 with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS cc")
