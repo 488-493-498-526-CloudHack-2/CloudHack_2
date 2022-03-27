@@ -24,14 +24,15 @@ def create_connection():
 '''
 
 import psycopg2
-
+pswd=os.getenv('POSTGRESPSWD')
 con = psycopg2.connect(database='test', user='postgres',
-                       password='sonali123')
+                       password=pswd,host="host.docker.internal")
 with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS cc")
-    cur.execute("CREATE TABLE cc(pickup VARCHAR(100),destination VARCHAR(100), time INT,cost DOUBLE,seats INT)")
 
+    cur.execute("CREATE TABLE cc(pickup VARCHAR(100),destination VARCHAR(100), time INT,cost REAL,seats INT)")
+    print("table created")
 
 #ch: channel,paramaters that come along with pika consumers
 def callback(ch, method, properties, body): #put entry into database
@@ -41,14 +42,20 @@ def callback(ch, method, properties, body): #put entry into database
     #print("[*] Ride for ",slpTime,"seconds")
     #time.sleep(slpTime)
     #print(" [x] Ride completed")
-    cur.execute("INSERT INTO cc(pickup,destination,time,cost,seats) VALUES(cmd['pickup'],cmd['destination'],cmd['time'],cmd['cost'],cmd['seats'])")
+    pick = cmd["pickup"]
+    dest = cmd["destination"]
+    t = cmd["time"]
+    seats = cmd["seats"]
+    cost = cmd["cost"]
+    with con:
+        cur.execute(f"INSERT INTO cc(pickup,destination,time,cost,seats) VALUES(\'{pick}\',\'{dest}\',\'{t}\',\'{cost}\',\'{seats}\')")
     ch.basic_ack(delivery_tag=method.delivery_tag) #message has been consumer, del_tag:
 
     
 try:
-    SERVER_IP = os.getenv("PRODUCER_ADDRESS")
-    CONSUMER_ID = os.getenv("CONSUMER_ID")
-    data = {"consumer_id":CONSUMER_ID, "name":CONSUMER_ID}
+    #SERVER_IP = os.getenv("PRODUCER_ADDRESS")
+    #CONSUMER_ID = os.getenv("CONSUMER_ID")
+    #data = {"consumer_id":CONSUMER_ID, "name":CONSUMER_ID}
     #res = requests.post(SERVER_IP+"/new_ride_matching_consumer", json=data)
     #if not res.ok:
         #raise Exception("Response not received!!")
