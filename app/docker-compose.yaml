@@ -44,6 +44,7 @@ services:
       - producer
       - rabbitmq
     environment:
+    - PYTHONUNBUFFERED=1
     - POSTGRESPSWD=sonali123
        
 

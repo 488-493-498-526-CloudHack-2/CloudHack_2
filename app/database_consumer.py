@@ -49,6 +49,10 @@ def callback(ch, method, properties, body): #put entry into database
     cost = cmd["cost"]
     with con:
         cur.execute(f"INSERT INTO cc(pickup,destination,time,cost,seats) VALUES(\'{pick}\',\'{dest}\',\'{t}\',\'{cost}\',\'{seats}\')")
+        print("Inserted")
+        cur.execute(f"SELECT * FROM cc")	
+        res = cur.fetchall()
+        print(res)
     ch.basic_ack(delivery_tag=method.delivery_tag) #message has been consumer, del_tag:
 
     
