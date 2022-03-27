@@ -11,26 +11,14 @@ sleepTime = 10
 print(' [*] Sleeping for ', sleepTime, ' seconds.')
 time.sleep(sleepTime)
 
-'''
-@app.before_request
-def create_connection():
-	try:
-		designation = request.args.get('designation')
-		if 'db' not in g:
-			g.db = psycopg2.connect(dbname="hd", user=designation, password="1234",host="127.0.0.1")
-	except (Exception, psycopg2.Error) as error:
-		print("Could not create connection:", error)
-
-'''
 
 import psycopg2
 pswd=os.getenv('POSTGRESPSWD')
-con = psycopg2.connect(database='test', user='postgres',
-                       password=pswd, host=os.getenv('HOST'))
+con = psycopg2.connect(user='postgres',
+                       password=pswd, host="db")
 with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS cc")
-
     cur.execute("CREATE TABLE cc(pickup VARCHAR(100),destination VARCHAR(100), time INT,cost REAL,seats INT)")
     print("table created")
 
@@ -38,10 +26,6 @@ with con:
 def callback(ch, method, properties, body): #put entry into database
     cmd = body.decode()
     cmd = json.loads(cmd)
-    #slpTime = cmd["time"]
-    #print("[*] Ride for ",slpTime,"seconds")
-    #time.sleep(slpTime)
-    #print(" [x] Ride completed")
     pick = cmd["pickup"]
     dest = cmd["destination"]
     t = cmd["time"]
@@ -49,16 +33,14 @@ def callback(ch, method, properties, body): #put entry into database
     cost = cmd["cost"]
     with con:
         cur.execute(f"INSERT INTO cc(pickup,destination,time,cost,seats) VALUES(\'{pick}\',\'{dest}\',\'{t}\',\'{cost}\',\'{seats}\')")
+        print("Inserted")
+        cur.execute(f"SELECT * FROM cc")	
+        res = cur.fetchall()
+        print(res)
     ch.basic_ack(delivery_tag=method.delivery_tag) #message has been consumer, del_tag:
 
     
 try:
-    #SERVER_IP = os.getenv("PRODUCER_ADDRESS")
-    #CONSUMER_ID = os.getenv("CONSUMER_ID")
-    #data = {"consumer_id":CONSUMER_ID, "name":CONSUMER_ID}
-    #res = requests.post(SERVER_IP+"/new_ride_matching_consumer", json=data)
-    #if not res.ok:
-        #raise Exception("Response not received!!")
     
     print(' [*] Connecting to server ...')
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
