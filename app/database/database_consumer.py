@@ -7,11 +7,6 @@ import os
 import json
 
 
-sleepTime = 10
-print(' [*] Sleeping for ', sleepTime, ' seconds.')
-time.sleep(sleepTime)
-
-
 import psycopg2
 pswd=os.getenv('POSTGRESPSWD')
 con = psycopg2.connect(user='postgres',
@@ -39,19 +34,22 @@ def callback(ch, method, properties, body): #put entry into database
         print(res)
     ch.basic_ack(delivery_tag=method.delivery_tag) #message has been consumer, del_tag:
 
-    
-try:
-    
-    print(' [*] Connecting to server ...')
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
-    channel = connection.channel()
-    channel.queue_declare(queue='database', durable=True)
+while 1:
+    sleepTime = 5
+    print(' [*] Sleeping for ', sleepTime, ' seconds.')
+    time.sleep(sleepTime)
 
-    print(' [*] Waiting for messages.')
+    try:
+        print(' [*] Connecting to server ...')
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
+        channel = connection.channel()
+        channel.queue_declare(queue='database', durable=True)
 
-    channel.basic_qos(prefetch_count=1) #qos:maximum number of messages on the queue, prefetch=true,shared across allconsumers on the channel
-    channel.basic_consume(queue='database', on_message_callback=callback)
-    channel.start_consuming()
+        print(' [*] Waiting for messages.')
 
-except Exception as e:
-    print(e)
+        channel.basic_qos(prefetch_count=1) #qos:maximum number of messages on the queue, prefetch=true,shared across allconsumers on the channel
+        channel.basic_consume(queue='database', on_message_callback=callback)
+        channel.start_consuming()
+
+    except Exception as e:
+        print(e)

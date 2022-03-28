@@ -35,15 +35,14 @@ def new_ride():
 @app.route("/new_ride_matching_consumer",methods=["POST"])
 def new_ride_matching_consumer():
     data = request.json
-
     consumer_id = data['consumer_id']
     name = data['name']
     ip = request.remote_addr
     req_ip = request.remote_addr
 
     mapp[name,ip] = [consumer_id,req_ip]
-
-    return "Saved details to Map"
+    consumer_data.append(mapp)
+    return " [x] Array contains %r" % consumer_data
 
 # @app.route("/")
 # def home():

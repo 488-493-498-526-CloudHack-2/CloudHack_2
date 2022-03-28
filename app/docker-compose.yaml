@@ -54,15 +54,13 @@ services:
   ride_database:
   # image: 
     build:
-      context: ./
+      context: ./database
       dockerfile: Dockerfile
-    depends_on:
-    - db
     container_name: database 
-  #   restart: 
     depends_on: 
       - producer
       - rabbitmq
+      - db
     environment:
     - PYTHONUNBUFFERED=1
     - POSTGRESPSWD=postgres
