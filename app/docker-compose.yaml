@@ -25,10 +25,10 @@ services:
       # - 15672:15672
 
   producer:
-    image: producer
+    # image: producer
     build:
       context: ./producer
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
     container_name: producer
     ports: 
       - 5000:5000
@@ -38,10 +38,10 @@ services:
       - rabbitmq
 
   ride_matching:
-    image: consumer
+    # image: consumer
     build:
       context: ./consumer
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
     container_name: consumer
     depends_on:
       - producer
@@ -55,7 +55,7 @@ services:
   # image: 
     build:
       context: ./database
-      dockerfile: Dockerfile
+      # dockerfile: Dockerfile
     container_name: database 
     depends_on: 
       - producer
@@ -66,13 +66,5 @@ services:
     - POSTGRESPSWD=postgres
     #- HOST=host.docker.internal 
     - HOST=db
-    links:
-      - db
-    volumes:
-    - './:/src'
-
-  
-  
-# volumes:
-#   db:
-#     driver: local
+    # links:
+    #   - db

@@ -9,8 +9,9 @@ import json
 
 import psycopg2
 pswd=os.getenv('POSTGRESPSWD')
+db = os.getenv("HOST")
 con = psycopg2.connect(user='postgres',
-                       password=pswd, host="db")
+                       password=pswd, host=db)
 with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS cc")
