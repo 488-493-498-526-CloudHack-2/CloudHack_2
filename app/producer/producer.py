@@ -26,7 +26,7 @@ def new_ride():
     channel.queue_declare(queue='database',durable=True)
     channel.basic_publish(exchange='',
                         routing_key='database',
-                        body=json_data)
+                        body=json_data) #exchange receives messages from producer amd pushes it to queues, nameless exchange 
     print(" [x] Sent %r to database queue" % json_data)
     connection.close()
 
@@ -38,8 +38,8 @@ def new_ride_matching_consumer():
 
     consumer_id = data['consumer_id']
     name = data['name']
-    ip = request.remote_addr
-    req_ip = request.remote_addr
+    ip = request.remote_addr #get consumer's ip address??
+    req_ip = request.remote_addr 
 
     mapp[name,ip] = [consumer_id,req_ip]
 
