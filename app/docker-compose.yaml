@@ -4,31 +4,19 @@ version: "2.1"
 services:
   db:
     container_name: "db"
-    # image: postgres:14.1-alpine
     build:
       context: ./postgres_db
-      dockerfile: Dockerfile
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    # ports:
-    #  - '5432:5432'
-    # volumes: 
-    #   - db:/var/lib/postgresql/data
-      #- ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
        
   rabbitmq:
     image: "rabbitmq:latest"
     container_name: "rabbitmq" 
-    # ports:
-      # - 5672:5672
-      # - 15672:15672
 
   producer:
-    # image: producer
     build:
       context: ./producer
-      # dockerfile: Dockerfile
     container_name: producer
     ports: 
       - 5000:5000
@@ -38,10 +26,8 @@ services:
       - rabbitmq
 
   ride_matching:
-    # image: consumer
     build:
       context: ./consumer
-      # dockerfile: Dockerfile
     container_name: consumer
     depends_on:
       - producer
@@ -55,7 +41,6 @@ services:
   # image: 
     build:
       context: ./database
-      # dockerfile: Dockerfile
     container_name: database 
     depends_on: 
       - producer
@@ -64,7 +49,4 @@ services:
     environment:
     - PYTHONUNBUFFERED=1
     - POSTGRESPSWD=postgres
-    #- HOST=host.docker.internal 
     - HOST=db
-    # links:
-    #   - db
