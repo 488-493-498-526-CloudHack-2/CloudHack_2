@@ -8,7 +8,7 @@ def callback(ch, method, properties, body):
     cmd = body.decode()
     cmd = json.loads(cmd)
     slpTime = cmd["time"]
-    print("[*] Ride for ",slpTime,"seconds")
+    print("[*] Riding for ",slpTime,"seconds")
     time.sleep(slpTime)
     print(" [x] Ride completed")
     ch.basic_ack(delivery_tag=method.delivery_tag)

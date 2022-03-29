@@ -3,10 +3,24 @@ from flask import Flask
 from flask import request
 import json
 import pika
+import time
 
 app = Flask(__name__)
 consumer_data = []
 mapp = dict()
+
+global connection, channel
+
+while 1:
+    try:
+        time.sleep(5)
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+        channel = connection.channel()
+        channel.queue_declare(queue='ride_matching',durable=True)
+        channel.queue_declare(queue='database',durable=True)
+        break
+    except e:
+        print(e)
 
 @app.route('/new_ride',methods=["POST"])
 def new_ride():
@@ -15,20 +29,15 @@ def new_ride():
 
     json_data = json.dumps(data)
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-    channel = connection.channel()
-    channel.queue_declare(queue='ride_matching',durable=True)
     channel.basic_publish(exchange='',
                         routing_key='ride_matching',
                         body=json_data)
     print(" [x] Sent %r to ride_matching queue" % json_data)
 
-    channel.queue_declare(queue='database',durable=True)
     channel.basic_publish(exchange='',
                         routing_key='database',
                         body=json_data)
     print(" [x] Sent %r to database queue" % json_data)
-    connection.close()
 
     return "Pushed to queues"
 
@@ -43,17 +52,6 @@ def new_ride_matching_consumer():
     mapp[name,ip] = [consumer_id,req_ip]
     consumer_data.append(mapp)
     return " [x] Array contains %r" % consumer_data
-
-# @app.route("/")
-# def home():
-#     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
-#     channel = connection.channel()
-#     channel.queue_declare(queue='hello',durable=True)
-#     channel.basic_publish(exchange='',
-#                         routing_key='hello',
-#                         body='Hello World!')
-#     connection.close()
-#     return "[x] Sent 'Hello World!'"
 
 if __name__ == '__main__':
    app.run(debug = True)
