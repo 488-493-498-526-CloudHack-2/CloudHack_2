@@ -37,6 +37,18 @@ services:
       - CONSUMER_ID=CUSTOMER_1
       - PRODUCER_ADDRESS=http://producer:5000
 
+  ride_matching2:
+    build:
+      context: ./consumer
+    container_name: consumer2
+    depends_on:
+      - producer
+      - rabbitmq
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CONSUMER_ID=CUSTOMER_2
+      - PRODUCER_ADDRESS=http://producer:5000
+
   ride_database:
   # image: 
     build:
