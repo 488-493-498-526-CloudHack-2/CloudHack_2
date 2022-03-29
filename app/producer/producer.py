@@ -19,7 +19,7 @@ while 1:
         channel.queue_declare(queue='ride_matching',durable=True)
         channel.queue_declare(queue='database',durable=True)
         break
-    except e:
+    except Exception as e:
         print(e)
 
 @app.route('/new_ride',methods=["POST"])
