@@ -4,14 +4,20 @@ import requests
 import os
 import json
 
+CONSUMER_ID = 0
+tc = 0
+
 def callback(ch, method, properties, body):
+    
     cmd = body.decode()
     cmd = json.loads(cmd)
     slpTime = cmd["time"]
     print("[*] Riding for ",slpTime,"seconds")
     time.sleep(slpTime)
-    print(" [x] Ride completed")
+    global tc
+    print(" [x] Ride completed"," task_id", tc, "consumer id",CONSUMER_ID)
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    tc+=1
 
 while 1:
     sleepTime = 5
